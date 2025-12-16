@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Q
 from datetime import datetime, timedelta
-from .models import Patient, MedicalRecord, Appointment
+from patients.models import Patient, MedicalRecord
+from appointments.models import Appointment
 from .serializers import PatientSerializer, MedicalRecordSerializer, AppointmentSerializer
 from ai_assistant.services import MedicalAIAssistant, PredictiveAnalytics
 import pandas as pd

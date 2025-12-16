@@ -1,11 +1,7 @@
+# patients/models.py
 from django.db import models
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-
-
-################
-# PACIENTES
-################
 
 class Patient(models.Model):
     GENDER_CHOICES = [
@@ -14,23 +10,31 @@ class Patient(models.Model):
         ('O', 'Outro'),
     ]
     
-    doctor = models.ForeignKey(User, on_delete = models.CASCADE, related_name='patients')
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patients')
     full_name = models.CharField(max_length=255)
     cpf = models.CharField(max_length=14, unique=True)
     birth_date = models.DateField()
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     phone = models.CharField(max_length=20)
-    email = models.EmailField(blank=True, null=True)
-    address = models.TextField
+    email = models.EmailField(blank=True)
     
-    # Medical Info
+    # Endereço completo
+    street = models.CharField(max_length=255, verbose_name="Rua/Avenida")
+    number = models.CharField(max_length=10, verbose_name="Número")
+    complement = models.CharField(max_length=100, blank=True, verbose_name="Complemento")
+    neighborhood = models.CharField(max_length=100, verbose_name="Bairro")
+    city = models.CharField(max_length=100, verbose_name="Cidade")
+    state = models.CharField(max_length=2, verbose_name="Estado (UF)")
+    zipcode = models.CharField(max_length=10, verbose_name="CEP")
+    
+    # Medical info
     blood_type = models.CharField(max_length=3, blank=True)
     allergies = models.TextField(blank=True)
     chronic_conditions = models.TextField(blank=True)
     
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=True)
     
     class Meta:
@@ -39,14 +43,11 @@ class Patient(models.Model):
             models.Index(fields=['doctor', 'full_name']),
             models.Index(fields=['cpf']),
         ]
-        
+    
     def __str__(self):
         return f"{self.full_name} - {self.cpf}"
-    
 
-##################
-# Medical Record
-##################
+
 class MedicalRecord(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='records')
     doctor = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -83,3 +84,18 @@ class MedicalRecord(models.Model):
         return f"Prontuário {self.patient.full_name} - {self.created_at.date()}"
 
 
+class Prescription(models.Model):
+    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE, related_name='prescriptions')
+    
+    medication_name = models.CharField(max_length=255)
+    dosage = models.CharField(max_length=100)
+    frequency = models.CharField(max_length=100)
+    duration = models.CharField(max_length=100)
+    instructions = models.TextField(blank=True)
+    
+    ai_interaction_check = models.JSONField(default=dict, blank=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.medication_name} - {self.medical_record.patient.full_name}"

@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'medicAI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
+'''DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('PGDATABASE', default='medai_db'),
@@ -92,6 +92,13 @@ DATABASES = {
         'PASSWORD': config('PGPASSWORD', default='postgres'),
         'HOST': config('PGHOST', default='localhost'),
         'PORT': config('PGPORT', default='5432'),
+    }
+}'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
@@ -170,10 +177,10 @@ CELERY_TIMEZONE = TIME_ZONE
 
 
 # Security settings for production
-if not DEBUG:
+'''if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
+    X_FRAME_OPTIONS = 'DENY'''

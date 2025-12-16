@@ -1,7 +1,10 @@
 # api/serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Patient, MedicalRecord, Appointment, Prescription, AIConversation
+from patients.models import Patient, MedicalRecord, Prescription
+from appointments.models import Appointment 
+from ai_assistant.models import AIConversation
+
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,12 +16,15 @@ class UserSerializer(serializers.ModelSerializer):
 class PatientSerializer(serializers.ModelSerializer):
     age = serializers.SerializerMethodField()
     total_appointments = serializers.SerializerMethodField()
+    full_address = serializers.SerializerMethodField()
     
     class Meta:
         model = Patient
         fields = [
             'id', 'full_name', 'cpf', 'birth_date', 'age', 'gender',
-            'phone', 'email', 'address', 'blood_type', 'allergies',
+            'phone', 'email', 
+            'street', 'number', 'complement', 'neighborhood', 'city', 'state', 'zipcode',
+            'full_address', 'blood_type', 'allergies',
             'chronic_conditions', 'created_at', 'updated_at',
             'total_appointments'
         ]
@@ -31,6 +37,17 @@ class PatientSerializer(serializers.ModelSerializer):
     
     def get_total_appointments(self, obj):
         return obj.appointments.count()
+    
+    def get_full_address(self, obj):
+        address_parts = [
+            obj.street,
+            obj.number,
+            obj.complement,
+            obj.neighborhood,
+            f"{obj.city}/{obj.state}",
+            obj.zipcode
+        ]
+        return ', '.join(filter(None, address_parts))
 
 
 class PrescriptionSerializer(serializers.ModelSerializer):

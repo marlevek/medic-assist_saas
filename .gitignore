@@ -1,3 +1,15 @@
-/venv/
-.env
+venv/
+.env/
+
+# Ignorar arquivos do IDE (ex: VS Code)
+.vscode/
+
+# Ignorar logs e arquivos de banco de dados temporários
+*.log
+*.sqlite3
+
+# Ignorar pastas de cache do Python
+__pycache__/
+*.pyc
+*.pyd
 

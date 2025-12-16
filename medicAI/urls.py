@@ -6,7 +6,6 @@ from api.views import (
     AppointmentViewSet, DashboardView
 )
 
-
 router = DefaultRouter()
 router.register(r'patients', PatientViewSet, basename='patient')
 router.register(r'records', MedicalRecordViewSet, basename='record')
